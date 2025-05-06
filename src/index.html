@@ -10,7 +10,7 @@
 </head>
 
 <body>
-    <div class="header">
+    <!-- <div class="header">
         <img src="/media/pinterest.png" alt="Pinterest-JS" class="logo">
         <div class="search-container">
             <input type="text" class="search-input" placeholder="Поиск...">
@@ -67,7 +67,22 @@
             <button class="circle-btn"></button>
         </div>
        
+    </div> -->
+
+
+    <div class="header">
+        <img src="/media/pinterest.png" alt="Pinterest-JS" class="logo" />
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Поиск..." />
+        </div>
+        <div class="board-selector">
+            <select id="boardSelect"></select>
+            <input type="text" id="newBoardName" placeholder="Новая доска" />
+            <button id="createBoardBtn">Создать</button>
+        </div>
     </div>
+
+    <div class="pins-container"></div>
 
     <script src="script.js"></script>
 </body>

@@ -3,6 +3,7 @@ body {
     margin: 0;
     padding: 0;
 }
+
 .header {
     display: flex;
     flex-direction: row;
@@ -11,14 +12,17 @@ body {
     padding: 10px 20px;
     background-color: #f8f8f8;
 }
+
 .logo {
     height: 100px;
 }
+
 .search-container {
     flex: 1;
     display: flex;
     justify-content: center;
 }
+
 .search-input {
     width: 60%;
     padding: 8px;
@@ -26,6 +30,7 @@ body {
     border: 1px solid #ccc;
     border-radius: 4px;
 }
+
 .choose-board-button {
     padding: 8px 15px;
     background-color: #4CAF50;
@@ -34,6 +39,7 @@ body {
     border-radius: 4px;
     cursor: pointer;
 }
+
 .choose-board-button:hover {
     background-color: #45a049;
 }
@@ -42,6 +48,8 @@ body {
     .header {
         flex-direction: column;
         text-align: center;
+        gap: 15px;
+        width: 100%;
     }
 
     .search-container {
@@ -50,7 +58,7 @@ body {
     }
 
     .search-input {
-        width: 80%;  
+        width: 80%;
         font-size: 14px;
     }
 
@@ -89,6 +97,8 @@ body {
     overflow: hidden;
     cursor: pointer;
     transition: transform 0.3s ease;
+    width: 250px;
+    height: 350px;
 }
 
 .pin:hover {
@@ -109,31 +119,76 @@ body {
     color: #333;
     background-color: #f7f7f7;
     text-align: center;
-    position: relative; 
+    position: relative;
 }
 
 
 .circle-btn {
     position: absolute;
-    bottom: 70px; 
+    bottom: 70px;
     left: 90%;
-    transform: translateX(-50%); 
+    transform: translateX(-50%);
     width: 30px;
-    height: 30px; 
-    background-color: #96b397c7; 
+    height: 30px;
+    background-color: #f46262c7;
     border: none;
-    border-radius: 50%; 
+    border-radius: 50%;
     cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+    opacity: 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: background-color 0.3s ease;
 }
 
 .circle-btn:hover {
-    background-color: #45a049; 
+    background-color: #d42424;
 }
+
+.pin:hover .circle-btn {
+    opacity: 1;
+}
+
 
 @media (max-width: 768px) {
     .pins-container {
         grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     }
+}
+
+/* Стили для board-selector */
+.board-selector {
+    width: 100%;
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f8f8f8;
+    text-align: center;
+}
+
+.board-selector select {
+    width: 60%;
+    padding: 10px;
+    margin: 10px 0;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.board-selector button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.board-selector button:hover {
+    background-color: #45a049;
+}
+
+.board-selector .board-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
 }
