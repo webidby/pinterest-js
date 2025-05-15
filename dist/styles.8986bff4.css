@@ -277,4 +277,31 @@ body {
     background-color: #999;
 }
 
+/* Стили для меню выбора доски */
+.board-select-menu {
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 8px;
+    z-index: 1001;
+}
+
+.board-select-menu button {
+    background: none;
+    border: none;
+    padding: 8px 12px;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 4px;
+}
+
+.board-select-menu button:hover {
+    background-color: #eee;
+}
+
+
 /*# sourceMappingURL=/styles.8986bff4.css.map */

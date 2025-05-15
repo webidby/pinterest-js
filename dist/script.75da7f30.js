@@ -322,12 +322,9 @@ function createActionMenu(x, y, pin) {
   addPinBtn.textContent = 'Добавить на доску';
   addPinBtn.addEventListener('click', function () {
     if (currentBoard === 'all') {
-      alert('Сначала выберите доску!');
-      return;
+      // Показать меню выбора доски, если доска не выбрана
+      showBoardSelectionMenu(pin);
     }
-    (0, _storage.addPinToBoard)(currentBoard, pin);
-    alert("\u041F\u0438\u043D \u0434\u043E\u0431\u0430\u0432\u043B\u0435\u043D \u0432 \u0434\u043E\u0441\u043A\u0443 \"".concat(currentBoard, "\""));
-    actionMenu.remove();
   });
   actionMenu.appendChild(addPinBtn);
 
@@ -345,6 +342,42 @@ function createActionMenu(x, y, pin) {
   function onClickOutside(event) {
     if (!actionMenu.contains(event.target)) {
       actionMenu.remove();
+      document.removeEventListener('click', onClickOutside);
+    }
+  }
+  setTimeout(function () {
+    document.addEventListener('click', onClickOutside);
+  }, 0);
+}
+
+// Функция отображения меню для выбора доски
+function showBoardSelectionMenu(pin) {
+  var boardSelectMenu = document.createElement('div');
+  boardSelectMenu.className = 'board-select-menu';
+  var boards = (0, _storage.getBoards)();
+  boards.forEach(function (board) {
+    var boardOption = document.createElement('button');
+    boardOption.textContent = board.name;
+    boardOption.addEventListener('click', function () {
+      (0, _storage.addPinToBoard)(board.name, pin);
+      alert("\u041F\u0438\u043D \u0434\u043E\u0431\u0430\u0432\u043B\u0435\u043D \u0432 \u0434\u043E\u0441\u043A\u0443 \"".concat(board.name, "\""));
+      boardSelectMenu.remove(); // Убираем меню после выбора
+    });
+    boardSelectMenu.appendChild(boardOption);
+  });
+
+  // Добавим меню выбора доски в body
+  document.body.appendChild(boardSelectMenu);
+
+  // Позиционируем меню рядом с кнопкой "Добавить на доску"
+  var rect = actionMenu.getBoundingClientRect();
+  boardSelectMenu.style.top = rect.bottom + 5 + 'px';
+  boardSelectMenu.style.left = rect.left + 'px';
+
+  // Клик вне меню — закрыть его
+  function onClickOutside(event) {
+    if (!boardSelectMenu.contains(event.target)) {
+      boardSelectMenu.remove();
       document.removeEventListener('click', onClickOutside);
     }
   }
