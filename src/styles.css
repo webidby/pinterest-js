@@ -49,7 +49,6 @@ body {
         flex-direction: column;
         text-align: center;
         gap: 15px;
-        width: 100%;
     }
 
     .search-container {
@@ -146,7 +145,9 @@ body {
 
 @media (max-width: 768px) {
     .pins-container {
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 }
 
