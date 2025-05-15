@@ -10,6 +10,7 @@ export function saveBoards(boards) {
 
 export function addBoard(name) {
     const boards = getBoards();
+    if (boards.find(b => b.name === name)) return null; // не создавать дубликат
     const newBoard = { name, pins: [] };
     boards.push(newBoard);
     saveBoards(boards);

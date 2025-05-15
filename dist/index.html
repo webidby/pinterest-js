@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 
 <head>
     <meta charset="UTF-8">
@@ -10,73 +10,15 @@
 <script src="/styles.8986bff4.js"></script></head>
 
 <body>
-    <!-- <div class="header">
-        <img src="/media/pinterest.png" alt="Pinterest-JS" class="logo">
-        <div class="search-container">
-            <input type="text" class="search-input" placeholder="Поиск...">
-        </div>
-        <button class="choose-board-button">Выбрать доску</button>
-    </div>
-
-
-
-    <div class="pins-container">
-        <div class="pin">
-            <img src="/media/pin1.webp" alt="Pin 1">
-            <div class="pin-description">Пин 1</div>
-            <button class="circle-btn"></button>
-        </div>
-        <div class="pin">
-            <img src="/media/pin2.jpg" alt="Pin 2">
-            <div class="pin-description">Пин 2</div>
-            <button class="circle-btn"></button>
-        </div>
-        <div class="pin">
-            <img src="/media/pin3.jpg" alt="Pin 3">
-            <div class="pin-description">Пин 3</div>
-            <button class="circle-btn"></button>
-        </div>
-        <div class="pin">
-            <img src="/media/pin4.webp" alt="Pin 1">
-            <div class="pin-description">Пин 4</div>
-            <button class="circle-btn"></button>
-        </div>
-        <div class="pin">
-            <img src="/media/pin5.jpg" alt="Pin 2">
-            <div class="pin-description">Пин 5</div>
-            <button class="circle-btn"></button>
-        </div>
-        <div class="pin">
-            <img src="/media/pin6.webp" alt="Pin 3">
-            <div class="pin-description">Пин 6</div>
-            <button class="circle-btn"></button>
-        </div>
-        <div class="pin">
-            <img src="/media/pin7.jpg" alt="Pin 1">
-            <div class="pin-description">Пин 7</div>
-            <button class="circle-btn"></button>
-        </div>
-        <div class="pin">
-            <img src="/media/pin8.jpg" alt="Pin 2">
-            <div class="pin-description">Пин 8</div>
-            <button class="circle-btn"></button>
-        </div>
-        <div class="pin">
-            <img src="/media/pin9.webp" alt="Pin 3">
-            <div class="pin-description">Пин 9</div>
-            <button class="circle-btn"></button>
-        </div>
-       
-    </div> -->
-
-
     <div class="header">
         <img src="/pinterest.408f5afb.png" alt="Pinterest-JS" class="logo">
         <div class="search-container">
             <input type="text" class="search-input" placeholder="Поиск...">
         </div>
         <div class="board-selector">
-            <select id="boardSelect"></select>
+            <select id="boardSelect">
+                <option value="all">Все пины</option>
+            </select>
             <input type="text" id="newBoardName" placeholder="Новая доска">
             <button id="createBoardBtn">Создать</button>
         </div>
@@ -84,7 +26,16 @@
 
     <div class="pins-container"></div>
 
-    <script src="/script.75da7f30.js"></script>
+    <!-- Модальное окно для жалобы -->
+    <div class="complain-modal hidden" id="complainModal">
+        <div class="modal-content">
+            <textarea id="complainText" placeholder="Опишите жалобу..." rows="5"></textarea>
+            <button id="sendComplainBtn">Отправить жалобу</button>
+            <button id="closeComplainBtn">Закрыть</button>
+        </div>
+    </div>
+
+    <script type="module" src="/script.75da7f30.js"></script>
 </body>
 
 </html>

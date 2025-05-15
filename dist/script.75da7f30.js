@@ -137,6 +137,9 @@ function saveBoards(boards) {
 }
 function addBoard(name) {
   var boards = getBoards();
+  if (boards.find(function (b) {
+    return b.name === name;
+  })) return null; // не создавать дубликат
   var newBoard = {
     name: name,
     pins: []
@@ -174,12 +177,23 @@ var boardSelect = document.getElementById('boardSelect');
 var newBoardInput = document.getElementById('newBoardName');
 var createBoardBtn = document.getElementById('createBoardBtn');
 var pinsContainer = document.querySelector('.pins-container');
+var searchInput = document.querySelector('.search-input');
+var complainModal = document.getElementById('complainModal');
+var complainText = document.getElementById('complainText');
+var sendComplainBtn = document.getElementById('sendComplainBtn');
+var closeComplainBtn = document.getElementById('closeComplainBtn');
 var PINS_API_URL = 'https://681294a3129f6313e20effc5.mockapi.io/api/v1/pins';
+var currentPins = [];
+var currentBoard = 'all'; // all - показать все пины
+
+// Меню выбора действий
+var actionMenu = null;
 
 // Рендер выпадающего списка досок
 function renderBoardOptions() {
   var boards = (0, _storage.getBoards)();
-  boardSelect.innerHTML = '';
+  // очищаем, оставляя option all
+  boardSelect.innerHTML = "<option value=\"all\">\u0412\u0441\u0435 \u043F\u0438\u043D\u044B</option>";
   boards.forEach(function (board) {
     var opt = document.createElement('option');
     opt.value = board.name;
@@ -188,20 +202,10 @@ function renderBoardOptions() {
   });
 }
 
-// Создание доски
-createBoardBtn.addEventListener('click', function () {
-  var name = newBoardInput.value.trim();
-  if (name) {
-    (0, _storage.addBoard)(name);
-    renderBoardOptions();
-    newBoardInput.value = '';
-  }
-});
-
 // Загрузка пинов с mockapi
 function loadPins() {
   return _loadPins.apply(this, arguments);
-} // Добавление пина в доску
+} // Рендер пинов с учетом выбранной доски и поиска
 function _loadPins() {
   _loadPins = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
     var res, pins;
@@ -217,13 +221,8 @@ function _loadPins() {
           return res.json();
         case 6:
           pins = _context.sent;
-          pinsContainer.innerHTML = '';
-          pins.forEach(function (pin) {
-            var el = document.createElement('div');
-            el.className = 'pin';
-            el.innerHTML = "\n        <img src=\"".concat(pin.image, "\" alt=\"").concat(pin.title, "\">\n        <div class=\"pin-description\">").concat(pin.title, "</div>\n        <button class=\"circle-btn\" data-id=\"").concat(pin.id, "\">+</button>\n      ");
-            pinsContainer.appendChild(el);
-          });
+          currentPins = pins;
+          renderPins();
           _context.next = 15;
           break;
         case 11:
@@ -239,19 +238,136 @@ function _loadPins() {
   }));
   return _loadPins.apply(this, arguments);
 }
-document.addEventListener('click', function (e) {
-  if (e.target.classList.contains('circle-btn')) {
-    var boardName = boardSelect.value;
-    if (!boardName) return alert('Сначала выбери доску!');
-    var pinEl = e.target.closest('.pin');
-    var pin = {
-      id: e.target.dataset.id,
-      title: pinEl.querySelector('.pin-description').textContent,
-      image: pinEl.querySelector('img').src
-    };
-    (0, _storage.addPinToBoard)(boardName, pin);
-    alert("\u041F\u0438\u043D \u0434\u043E\u0431\u0430\u0432\u043B\u0435\u043D \u0432 \u0434\u043E\u0441\u043A\u0443 \"".concat(boardName, "\""));
+function renderPins() {
+  var pinsToShow = [];
+  if (currentBoard === 'all') {
+    pinsToShow = currentPins;
+  } else {
+    var board = (0, _storage.getBoardByName)(currentBoard);
+    pinsToShow = board ? board.pins : [];
   }
+  var searchTerm = searchInput.value.trim().toLowerCase();
+  if (searchTerm) {
+    pinsToShow = pinsToShow.filter(function (pin) {
+      return pin.title.toLowerCase().includes(searchTerm);
+    });
+  }
+  pinsContainer.innerHTML = '';
+  if (pinsToShow.length === 0) {
+    pinsContainer.innerHTML = '<p>Пины не найдены.</p>';
+    return;
+  }
+  pinsToShow.forEach(function (pin) {
+    var el = document.createElement('div');
+    el.className = 'pin';
+    el.dataset.id = pin.id;
+    el.innerHTML = "\n      <img src=\"".concat(pin.image, "\" alt=\"").concat(pin.title, "\">\n      <div class=\"pin-description\">").concat(pin.title, "</div>\n      <button class=\"circle-btn\">+</button>\n    ");
+    pinsContainer.appendChild(el);
+  });
+}
+
+// Создание доски
+createBoardBtn.addEventListener('click', function () {
+  var name = newBoardInput.value.trim();
+  if (!name) return alert('Введите название доски');
+  if ((0, _storage.addBoard)(name)) {
+    renderBoardOptions();
+    newBoardInput.value = '';
+  } else {
+    alert('Доска с таким именем уже существует');
+  }
+});
+
+// Обработка выбора доски
+boardSelect.addEventListener('change', function (e) {
+  currentBoard = e.target.value;
+  renderPins();
+});
+
+// Обработка поиска
+searchInput.addEventListener('input', function () {
+  renderPins();
+});
+
+// Закрыть модалку жалобы
+closeComplainBtn.addEventListener('click', function () {
+  complainModal.classList.add('hidden');
+  complainText.value = '';
+});
+
+// Отправить жалобу
+sendComplainBtn.addEventListener('click', function () {
+  var text = complainText.value.trim();
+  if (!text) {
+    alert('Пожалуйста, опишите жалобу');
+    return;
+  }
+  alert('Жалоба отправлена: ' + text);
+  complainText.value = '';
+  complainModal.classList.add('hidden');
+});
+
+// Функция создания меню действий
+function createActionMenu(x, y, pin) {
+  if (actionMenu) {
+    actionMenu.remove();
+  }
+  actionMenu = document.createElement('div');
+  actionMenu.className = 'action-menu';
+  actionMenu.style.top = y + 'px';
+  actionMenu.style.left = x + 'px';
+
+  // Кнопка для добавления пина на доску
+  var addPinBtn = document.createElement('button');
+  addPinBtn.textContent = 'Добавить на доску';
+  addPinBtn.addEventListener('click', function () {
+    if (currentBoard === 'all') {
+      alert('Сначала выберите доску!');
+      return;
+    }
+    (0, _storage.addPinToBoard)(currentBoard, pin);
+    alert("\u041F\u0438\u043D \u0434\u043E\u0431\u0430\u0432\u043B\u0435\u043D \u0432 \u0434\u043E\u0441\u043A\u0443 \"".concat(currentBoard, "\""));
+    actionMenu.remove();
+  });
+  actionMenu.appendChild(addPinBtn);
+
+  // Кнопка пожаловаться
+  var complainBtn = document.createElement('button');
+  complainBtn.textContent = 'Пожаловаться';
+  complainBtn.addEventListener('click', function () {
+    complainModal.classList.remove('hidden');
+    actionMenu.remove();
+  });
+  actionMenu.appendChild(complainBtn);
+  document.body.appendChild(actionMenu);
+
+  // Клик вне меню — закрыть его
+  function onClickOutside(event) {
+    if (!actionMenu.contains(event.target)) {
+      actionMenu.remove();
+      document.removeEventListener('click', onClickOutside);
+    }
+  }
+  setTimeout(function () {
+    document.addEventListener('click', onClickOutside);
+  }, 0);
+}
+
+// Обработка клика на кнопку "+"
+pinsContainer.addEventListener('click', function (e) {
+  if (!e.target.classList.contains('circle-btn')) return;
+  e.stopPropagation(); // чтобы клик не закрыл меню сразу
+
+  var pinEl = e.target.closest('.pin');
+  var pin = {
+    id: pinEl.dataset.id,
+    title: pinEl.querySelector('.pin-description').textContent,
+    image: pinEl.querySelector('img').src
+  };
+
+  // Позиция для меню
+  var rect = e.target.getBoundingClientRect();
+  createActionMenu(rect.right + 5, rect.top, pin);
 });
 
 // Инициализация
@@ -282,7 +398,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50233" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52388" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
